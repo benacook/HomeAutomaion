@@ -49,6 +49,20 @@ smallColunm{
     align-content: flex-end;
 }
 
+.topRight .w3-dark-gray{
+    position: absolute;
+    right: 0%;
+}
+.topRight .w3-dark-gray .w3-orange{
+    float: right;
+}
+
+.topRight .label{
+    position: relative;
+    right: 0%;
+}
+
+
 h2{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     color:whitesmoke;
