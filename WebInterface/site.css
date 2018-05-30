@@ -50,8 +50,9 @@ smallColunm{
 }
 
 .topRight .w3-dark-gray{
-    position: absolute;
-    right: 0%;
+    /* position: absolute;
+    right: 0%; */
+    float: right;
 }
 .topRight .w3-dark-gray .w3-orange{
     float: right;
@@ -59,6 +60,12 @@ smallColunm{
 
 .topRight .label{
     text-align: right;
+    margin-top: 1ch;
+}
+
+.bottomLeft .label{
+    text-align: left;
+    margin-top: 1ch;
 }
 
 
