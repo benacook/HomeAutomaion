@@ -57,7 +57,6 @@ app.get('/api/climate/get/:id', function (req, res) {
 // Sends all Climate data to a client
 //=============================================================================
 app.get('/api/climate/get', function (req, res) {
-  console.log('id = ' + req.params.id);
   //send data for id
   res.send(climate);
 }); // apt.get()
