@@ -6,19 +6,36 @@ $(document).ready(function()
     ///////////////////////////////////////////////////////////////////////////////
     var 
         //UI Vars
-        topRightHumidity    = document.getElementById("topRightHumidity");
-        bottomLeftTemp      = document.getElementById("bottomLeftTemp");
-        bottomRightButtons  = document.getElementById("bottomRightButtons");
+        topRightHumidity            = document.getElementById("topRightHumidity");
+        bottomLeftTemp              = document.getElementById("bottomLeftTemp");
+        bottomRightButtons          = document.getElementById("bottomRightButtons");
         //Humidity vars
-        MasterBedHumidity   = document.getElementById("MasterBedHumidity");
-        BedroomHumidity     = document.getElementById("BedroomHumidity");
-        HallwayHumidity     = document.getElementById("HallwayHumidity");
-        LivingRoomHumidity  = document.getElementById("LivingRoomHumidity");
+        //Bars
+        MasterBedHumidityBar        = document.getElementById("MasterBedHumidity");
+        BedroomHumidityBar          = document.getElementById("BedroomHumidity");
+        HallwayHumidityBar          = document.getElementById("HallwayHumidity");
+        LivingRoomHumidityBar       = document.getElementById("LivingRoomHumidity");
+        //Labels
+        MasterBedHumidityLabel      = document.getElementById("MasterBedHumidityLabel");
+        BedHumidityLabel            = document.getElementById("BedHumidityLabel");
+        HallwayHumidityLabel        = document.getElementById("HallwayHumidityLabel");
+        LivingHumidityLabel         = document.getElementById("LivingHumidityLabel");
         //Temperature vars
-        MasterBedTemperature   = document.getElementById("MasterBedTemperature");
-        BedroomTemperature     = document.getElementById("BedroomTemperature");
-        HallwayTemperature     = document.getElementById("HallwayTemperature");
-        LivingRoomTemperature  = document.getElementById("LivingRoomTemperature");
+        //Bars
+        MasterBedTemperature        = document.getElementById("MasterBedTemperature");
+        BedroomTemperature          = document.getElementById("BedroomTemperature");
+        HallwayTemperature          = document.getElementById("HallwayTemperature");
+        LivingRoomTemperature       = document.getElementById("LivingRoomTemperature");
+        //Labels
+        MasterBedTemperatureLabel   = document.getElementById("MasterBedTemperatureLabel");
+        BedTemperatureLabel         = document.getElementById("BedTemperatureLabel");
+        HallwayTemperatureLabel     = document.getElementById("HallwayTemperatureLabel");
+        LivingTemperatureLabel      = document.getElementById("LivingTemperatureLabel");
+        //weather
+        //temperature
+        WeatherTemperature          = document.getElementById("WeatherTemperature");
+        WeatherHumidity             = document.getElementById("WeatherHumidity");
+
         //
         MenuButton  = $(document).find("#menu");
         LivingLight = $(document).find("#livingLight");
@@ -26,7 +43,7 @@ $(document).ready(function()
     ///////////////////////////////////////////////////////////////////////////////
     //Timed events
     ///////////////////////////////////////////////////////////////////////////////
-        setInterval(GetClimate, 10000);
+        setInterval(TimedEvents, 10000);
 
     ///////////////////////////////////////////////////////////////////////////////
     //Show Menu
@@ -125,6 +142,11 @@ $(document).ready(function()
         xhttp.send();
     }
 
+    function TimedEvents(){
+        GetWeather();
+        GetClimate();
+    }
+
     function GetWeather()
     {
       var url = "http://api.openweathermap.org/data/2.5/weather?q=Congleton,uk&units=metric&appid=85fca04eed49d2054facb2000d1ae927";
@@ -136,7 +158,8 @@ $(document).ready(function()
         {
            var Weather = JSON.parse(xhttp.response);
            //alert(Weather.main.temp);
-           TempOut.textContext = Weather.main.temp;
+           WeatherTemperature.innerHTML = Weather.main.temp + '&deg;C';
+           WeatherHumidity.innerHTML    = Weather.main.humidity + '%';
         }
       }
       xhttp.send();
@@ -159,6 +182,15 @@ $(document).ready(function()
             BedroomHumidity.style.width    = climate[1].humidity + '%';
             HallwayHumidity.style.width    = climate[2].humidity + '%';
             LivingRoomHumidity.style.width = climate[3].humidity + '%';
+            //update humidity labels
+            MasterBedHumidityLabel.innerHTML
+            = climate[0].humidity + '%'+" Master Bedroom";
+            BedHumidityLabel.innerHTML
+            = climate[1].humidity + '%'+" BedRoom";
+            HallwayHumidityLabel.innerHTML
+            = climate[2].humidity + '%'+" Hallway";
+            LivingHumidityLabel.innerHTML
+            = climate[3].humidity + '%'+" Living Room";
 
             //update temperature bars
             MasterBedTemperature.style.width  =
@@ -169,6 +201,18 @@ $(document).ready(function()
             GetScaledValue(climate[2].temperature, 40, 100, 0, 0) + '%';
             LivingRoomTemperature.style.width =
             GetScaledValue(climate[3].temperature, 40, 100, 0, 0) + '%';
+            //update humidity labels
+            MasterBedTemperatureLabel.innerHTML
+            = "Master Bedroom " + climate[0].temperature + '&deg;C';
+            BedTemperatureLabel.innerHTML
+            = "BedRoom " + climate[1].temperature + '&deg;C';
+            HallwayTemperatureLabel.innerHTML
+            = "Hallway " + climate[2].temperature + '&deg;C';
+            LivingTemperatureLabel.innerHTML
+            = "Living Room " + climate[3].temperature + '&deg;C';
+
+
+
         }
       }
       xhttp.send();
