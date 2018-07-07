@@ -90,7 +90,7 @@ $(document).ready(function()
     //Living Room Light On
     ///////////////////////////////////////////////////////////////////////////////
     function LightOn(nodeId){
-        var url = "http://raspberrypi:8083/ZWaveAPI/Run/devices[" + nodeId + "].instances[0].Basic.Set(255)";
+        var url = "http://homehub:8083/ZWaveAPI/Run/devices[" + nodeId + "].instances[0].Basic.Set(255)";
         var xhttp = new XMLHttpRequest();
         xhttp.open("POST", url, false);
         xhttp.send();
@@ -100,7 +100,7 @@ $(document).ready(function()
     //Living Room Light Off
     ///////////////////////////////////////////////////////////////////////////////
     function LightOff(nodeId){
-        var url = "http://raspberrypi:8083/ZWaveAPI/Run/devices[" + nodeId + "].instances[0].Basic.Set(0)";
+        var url = "http://homehub:8083/ZWaveAPI/Run/devices[" + nodeId + "].instances[0].Basic.Set(0)";
         var xhttp = new XMLHttpRequest();
         xhttp.open("POST", url, false);
         xhttp.send();
@@ -108,7 +108,7 @@ $(document).ready(function()
 
     function GetLightState(nodeId)
     {
-        var  url = "http://raspberrypi:8083/ZWaveAPI/Run/devices[" + nodeId + "].Basic.data.level.value";
+        var  url = "http://homehub:8083/ZWaveAPI/Run/devices[" + nodeId + "].Basic.data.level.value";
         var xhttp = new XMLHttpRequest();
         xhttp.open("GET", url, false);
         xhttp.onload = function()
@@ -124,7 +124,7 @@ $(document).ready(function()
 
     function ToggleLight(nodeId)
     {
-        var  url = "http://raspberrypi:8083/ZWaveAPI/Run/devices[" + nodeId + "].Basic.data.level.value";
+        var  url = "http://homehub:8083/ZWaveAPI/Run/devices[" + nodeId + "].Basic.data.level.value";
         var xhttp = new XMLHttpRequest();
         xhttp.open("GET", url, false);
         xhttp.onload = function()
