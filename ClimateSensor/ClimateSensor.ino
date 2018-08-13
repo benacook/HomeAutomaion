@@ -77,7 +77,7 @@ void loop() {
     HTTPClient http;
     //http.begin("http://192.168.1.8:10000");
     //http.addHeader("Content-Type", "text/plain");
-    char url[256] = "http://192.168.1.6:3000/api/climate/set/3/humidity=";
+    char url[256] = "http://homehub:3000/api/climate/set/3/humidity=";
     strcat(url,humidityTemp);
     strcat(url, "&temperature=");
     strcat(url, celsiusTemp);
