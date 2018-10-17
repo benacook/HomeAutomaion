@@ -111,6 +111,28 @@ app.get('/api/climate/get', function (req, res) {
 }); // apt.get()
 
 //=============================================================================
+// Sends all MySQL Humidity data to client
+//=============================================================================
+app.get('/api/climate/get/mysql/hum', function (req, res) {
+  //send data
+  con.query("SELECT * FROM Humidity", function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+}); // apt.get()
+
+//=============================================================================
+// Sends all MySQL Temperature data to client
+//=============================================================================
+app.get('/api/climate/get/mysql/temp', function (req, res) {
+  //send data
+  con.query("SELECT * FROM Temperature", function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+}); // apt.get()
+
+//=============================================================================
 // Unrecognised requests
 //=============================================================================
 app.get('*', function (req, res) {
