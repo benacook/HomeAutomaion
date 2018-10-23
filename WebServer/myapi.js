@@ -21,6 +21,16 @@ var climate = [ {humidity: '0', temperature: '0'},
                 {humidity: '0', temperature: '0'},
                 {humidity: '0', temperature: '0'}
               ];
+var loggedData = function(t,h,ti) {
+                  this.temperature = t;
+                  this.humidity = h;
+                  this.hour = ti;
+                };
+
+var lastLogged = [new loggedData(0,0,0),
+                  new loggedData(0,0,0),
+                  new loggedData(0,0,0),
+                  new loggedData(0,0,0)]
 
 //=============================================================================
 // COnnect to MySQL Database
@@ -63,33 +73,58 @@ app.use(express.static(__dirname));
 app.get('/api/climate/set/:id/humidity=:hum&temperature=:temp', function (req, res) {
   console.log('id: ' + req.params.id + ' hum:' + req.params.hum +
   ' temp:' + req.params.temp);
+  //copy to vars for ease of use
+  var id = req.params.id;
+  var temp = req.params.temp;
+  var hum = req.params.hum;
 
   //save data
-  climate[req.params.id].humidity = req.params.hum;
-  climate[req.params.id].temperature = req.params.temp;
+  climate[req.params.id].humidity = hum;
+  climate[req.params.id].temperature = temp;
+
+
 
   //echo back to client
-  res.send(climate[req.params.id]);
+  res.send(climate[id]);
 
   //get date time
   var dt = new Date().toMysqlFormat();
+  //surround datetime with inverted commas
+  //as is required for MySQL datetime
   dt = "'"+dt+"'";
+  //construct query strings
   var HumQuery = "INSERT INTO Humidity (DateTime, Humidity, ID) VALUES ("+ 
-    dt + ","+ req.params.hum + "," + req.params.id+")";
+    dt + ","+ hum + "," + id+")";
   var TempQuery = "INSERT INTO Temperature (DateTime, Temperature, ID) VALUES ("+
-    dt + ","+ req.params.temp + "," + req.params.id+")";
+    dt + ","+ temp + "," + id+")";
 
-  //MySQL Log Humidity
-  con.query(HumQuery, function (err, result) {
-    if (err) throw err;
-    console.log("Humidity Logged to MySQL");
-  });
-
-  //MySQL Log Temperature
-  con.query(TempQuery, function (err, result) {
-    if (err) throw err;
-    console.log("Temperature Logged to MySQL");
-  });
+  //point dt to new date object
+  dt = new Date();
+  //only log once an hour or if the data changes
+  if(  lastLogged[id].hour != dt.getUTCHours() ||
+       lastLogged[id].humidity != hum||
+       lastLogged[id].temperature != temp ){
+    //set dt to null. dt set to new object in first
+    //query, then used to log last logged time in
+    //second query, this will fail in the second query
+    //if the first query threw error. this means if either
+    //query fails, lastLogged time will not be updated.
+    dt = null;
+    //MySQL Log Humidity     
+    con.query(HumQuery, function (err, result) {
+      if (err) throw err;
+      console.log("Humidity Logged to MySQL");
+      lastLogged[id].humidity = hum;
+      dt = new Date();
+    });
+    //MySQL Log Temperature
+    con.query(TempQuery, function (err, result) {
+      if (err) throw err;
+      console.log("Temperature Logged to MySQL");
+      lastLogged[id].temperature = temp;
+      lastLogged[id].hour = dt.getUTCHours();
+    });
+  }
 
 }); // apt.get()
 
