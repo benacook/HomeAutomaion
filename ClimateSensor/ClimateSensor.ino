@@ -77,7 +77,7 @@ void loop() {
     HTTPClient http;
     //http.begin("http://192.168.1.8:10000");
     //http.addHeader("Content-Type", "text/plain");
-    char url[256] = "http://homehub:3000/api/climate/set/3/humidity=";
+    char url[256] = "http://homehub:3000/api/climate/set/0/humidity=";
     strcat(url,humidityTemp);
     strcat(url, "&temperature=");
     strcat(url, celsiusTemp);
@@ -99,6 +99,5 @@ void loop() {
   else{
     Serial.println("error connecting to wifi");
   }
-  delay(10000);
+  delay(60000);
 }   
-
