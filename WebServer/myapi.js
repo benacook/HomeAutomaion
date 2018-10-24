@@ -126,7 +126,7 @@ app.get('/api/climate/set/:id/humidity=:hum&temperature=:temp', function (req, r
     });
   }
 
-}); // apt.get()
+}); 
 
 //=============================================================================
 // Sends Climate data by id to a client
@@ -135,7 +135,7 @@ app.get('/api/climate/get/:id', function (req, res) {
   console.log('id = ' + req.params.id);
   //send data for id
   res.send(climate[req.params.id]);
-}); // apt.get()
+}); 
 
 //=============================================================================
 // Sends all Climate data to a client
@@ -143,7 +143,7 @@ app.get('/api/climate/get/:id', function (req, res) {
 app.get('/api/climate/get', function (req, res) {
   //send data for id
   res.send(climate);
-}); // apt.get()
+}); 
 
 //=============================================================================
 // Sends all MySQL Humidity data to client
@@ -154,7 +154,7 @@ app.get('/api/climate/get/mysql/hum', function (req, res) {
     if (err) throw err;
     res.send(result);
   });
-}); // apt.get()
+}); 
 
 //=============================================================================
 // Sends all MySQL Temperature data to client
@@ -165,7 +165,31 @@ app.get('/api/climate/get/mysql/temp', function (req, res) {
     if (err) throw err;
     res.send(result);
   });
-}); // apt.get()
+}); 
+
+//=============================================================================
+// Sends MySQL Humidity data to client for specified ID
+//=============================================================================
+app.get('/api/climate/get/mysql/hum/:id', function (req, res) {
+  //send data
+  con.query("SELECT * FROM Humidity WHERE ID = "+req.params.id,
+  function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+}); 
+
+//=============================================================================
+// Sends MySQL Temperature data to client for specified ID
+//=============================================================================
+app.get('/api/climate/get/mysql/temp/:id', function (req, res) {
+  //send data
+  con.query("SELECT * FROM Temperature WHERE ID = "+req.params.id,
+  function (err, result, fields) {
+    if (err) throw err;
+    res.send(result);
+  });
+}); 
 
 //=============================================================================
 // Unrecognised requests
@@ -183,7 +207,7 @@ app.use(function (err, req, res, next) {
   } else {
     next(err);
   }
-}); // apt.use()
+});
 
 //=============================================================================
 // Start Express App Server
