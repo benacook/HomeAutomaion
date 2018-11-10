@@ -1,18 +1,24 @@
 /**
  * homehubapi.js
  *  
- * @version 1.0.0 - initial
+ * @version 1.2.0 - initial
  *
  * DESCRIPTION:
- * node.js server for Raspberry Pi to collect data from sensors and serve 
+ * node.js server to collect data from sensors and serve 
  * a web based user interface to allow control of light switches and
  * reading data 
  * @author Ben Cook
  */
 
+var connectionString = '';
+
 var http      = require('http');
 var express   = require('express');
 var mysql = require('mysql'); 
+var Mqtt = require('azure-iot-device-mqtt').Mqtt;
+var DeviceClient = require('azure-iot-device').Client
+var Message = require('azure-iot-device').Message;
+var client = DeviceClient.fromConnectionString(connectionString, Mqtt);
 
 var app       = express();
 
@@ -36,7 +42,7 @@ var lastLogged = [new loggedData(0,0,0),
 // COnnect to MySQL Database
 //=============================================================================
 var con = mysql.createConnection({
-  host: "localhost",
+  host: "",
   user: "",
   password: "",
   database: ""
@@ -87,7 +93,7 @@ app.get('/api/climate/set/:id/humidity=:hum&temperature=:temp', function (req, r
   //echo back to client
   res.send(climate[id]);
 
-  //get date time
+ //get date time
   var dt = new Date().toMysqlFormat();
   //surround datetime with inverted commas
   //as is required for MySQL datetime
@@ -126,7 +132,8 @@ app.get('/api/climate/set/:id/humidity=:hum&temperature=:temp', function (req, r
     });
   }
 
-}); 
+
+});
 
 //=============================================================================
 // Sends Climate data by id to a client
@@ -135,7 +142,7 @@ app.get('/api/climate/get/:id', function (req, res) {
   console.log('id = ' + req.params.id);
   //send data for id
   res.send(climate[req.params.id]);
-}); 
+});
 
 //=============================================================================
 // Sends all Climate data to a client
@@ -215,3 +222,45 @@ app.use(function (err, req, res, next) {
 app.listen(3000);
 console.log('App Server is listening on port 3000');
 
+
+//============================================================================
+//Log to Azure
+//============================================================================
+
+setInterval(function(){
+  
+  var masterBedroomTemp = parseInt(climate[0].temperature);
+  var bedroomTemp = parseInt(climate[1].temperature);
+  var hallwayTemp = parseInt(climate[2].temperature);
+  var livingRoomTemp = parseInt(climate[3].temperature);
+  var masterBedroomHum = parseInt(climate[0].humidity);
+  var bedroomHum = parseInt(climate[1].humidity);
+  var hallwayHum = parseInt(climate[2].humidity);
+  var livingRoomHum = parseInt(climate[3].humidity);
+  var dt = new Date().toMysqlFormat();	
+  var values =
+   {masterBedroomTemp,
+    masterBedroomHum,
+    bedroomTemp,
+    bedroomHum,
+    hallwayTemp,
+    hallwayHum,
+    livingRoomTemp,
+    livingRoomHum,
+    dt
+  };
+  console.log(values);
+  var message = new Message(JSON.stringify(values));
+
+  
+  console.log('Sending message: ' + message.getData());
+
+  // Send the message.
+  client.sendEvent(message, function (err) {
+    if (err) {
+      console.error('send error: ' + err.toString());
+    } else {
+      console.log('message sent');
+    }
+  });
+}, 60000);
